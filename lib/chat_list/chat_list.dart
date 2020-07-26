@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 
-class ChatList extends ChangeNotifier {
+class ChatListSource extends ChangeNotifier {
   List<String> _items = ["first", "second", "third", "forth", "fifth"];
 
   List<String> get items => _items;
