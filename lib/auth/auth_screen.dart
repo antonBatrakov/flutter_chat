@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_chat/chat_list/chat_list_screen.dart';
+import 'package:flutter_chat/resources/strings.dart';
 import 'package:keyboard_visibility/keyboard_visibility.dart';
 
 class AuthPage extends StatefulWidget {
@@ -23,6 +25,9 @@ class _AuthPageState extends State<AuthPage> {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+    ]);
     return Container(
       color: Colors.blue[50],
       child: SafeArea(
@@ -50,7 +55,7 @@ class _AuthPageState extends State<AuthPage> {
                         size: 110,
                       ),
                       Text(
-                        "Chat",
+                        AuthScreenStrings.authScreenTitle,
                         style: TextStyle(
                             color: Colors.black,
                             fontWeight: FontWeight.w400,
@@ -74,7 +79,7 @@ class _AuthPageState extends State<AuthPage> {
                           keyboardType: TextInputType.emailAddress,
                           decoration: InputDecoration(
                               alignLabelWithHint: true,
-                              labelText: "email",
+                              labelText: AuthScreenStrings.authScreenEmail,
                               contentPadding: EdgeInsets.all(8),
                               border: OutlineInputBorder()),
                         ),
@@ -89,7 +94,7 @@ class _AuthPageState extends State<AuthPage> {
                           obscureText: true,
                           decoration: InputDecoration(
                               alignLabelWithHint: true,
-                              labelText: "password",
+                              labelText: AuthScreenStrings.authScreenPassword,
                               contentPadding: EdgeInsets.all(8),
                               border: OutlineInputBorder()),
                         ),
@@ -103,15 +108,15 @@ class _AuthPageState extends State<AuthPage> {
                           color: Colors.blue,
                           minWidth: double.infinity,
                           child: Text(
-                            "Sign in",
+                            AuthScreenStrings.authScreenSignIn,
                             style: TextStyle(color: Colors.white),
                           ),
-                          onPressed: () => {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => ChatListPage()))
-                          },
+                          onPressed: () => Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ChatListPage(),
+                            ),
+                          ),
                         ),
                       )
                     ],

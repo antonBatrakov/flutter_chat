@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_chat/chat_list/chat_list.dart';
 import 'package:flutter_chat/chat_list/chat_list_item.dart';
+import 'package:flutter_chat/resources/strings.dart';
 import 'package:provider/provider.dart';
 
 class ChatListPage extends StatefulWidget {
@@ -26,31 +28,44 @@ class _ChatListPageState extends State<ChatListPage>
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+    ]);
+
     return ChangeNotifierProvider(
       create: (ctx) => ChatListSource(),
-      child: Scaffold(
+      builder: (ctx, child) => Scaffold(
+        floatingActionButton: FloatingActionButton(
+          onPressed: () =>
+              Provider.of<ChatListSource>(ctx, listen: false).items = [],
+          child: Icon(Icons.delete),
+        ),
         appBar: AppBar(
-          title: Text("Chat list"),
+          title: Text(ChatListScreenStrings.chatScreenTitle),
           bottom: TabBar(
             controller: _tabController,
             tabs: <Widget>[
               Tab(
                 icon: Icon(Icons.chat),
-                text: "chat",
+                text: ChatListScreenStrings.chatScreenChats,
               ),
               Tab(
                 icon: Icon(Icons.group),
-                text: "group",
+                text: ChatListScreenStrings.chatScreenGroups,
               ),
               Tab(
                 icon: Icon(Icons.settings),
-                text: "settings",
+                text: ChatListScreenStrings.chatScreenSettings,
               )
             ],
           ),
         ),
         body: TabBarView(
-          children: <Widget>[ChatListView(), ChatListView(), ChatListView()],
+          children: <Widget>[
+            ChatListView(),
+            ChatListView(),
+            ChatListView(),
+          ],
           controller: _tabController,
         ),
       ),
@@ -58,18 +73,14 @@ class _ChatListPageState extends State<ChatListPage>
   }
 }
 
-class ChatListView extends StatefulWidget {
-  @override
-  _ChatListViewState createState() => _ChatListViewState();
-}
-
-class _ChatListViewState extends State<ChatListView> {
+class ChatListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final chatList = Provider.of<ChatListSource>(context);
-    return ListView.builder(
-      itemCount: chatList.items.length,
-      itemBuilder: (ctx, position) => ChatListItem(chatList.items[position]),
+    return Consumer<ChatListSource>(
+      builder: (ctx, chatList, child) => ListView.builder(
+        itemCount: chatList.items.length,
+        itemBuilder: (ctx, position) => ChatListItem(chatList.items[position]),
+      ),
     );
   }
 }
