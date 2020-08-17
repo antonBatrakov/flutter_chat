@@ -1,15 +1,21 @@
 import 'dart:async';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_chat/models/multiple_select.dart';
 import 'package:flutter_chat/models/user_model.dart';
+import 'package:flutter_chat/repository/user_repository.dart';
 
 abstract class SettingsModel {
   SettingsModel._();
 
   factory SettingsModel.simpleSetting(String name) = SimpleSettingsModel;
+
   factory SettingsModel.boolSetting(String name) = BoolSettingsModel;
+
   factory SettingsModel.logOutSettings(String name) = LogOutSettingsModel;
-  factory SettingsModel.userSettings() = UserSettingsModel;
+
+  factory SettingsModel.userSettings(UserRepository repository) = UserSettingsModel;
+
   factory SettingsModel.multipleChoiceSetting(
           String name, List<MultipleSelectValue<String>> valueOptions) =
       MultipleChooseSettingsModel;
@@ -80,14 +86,15 @@ class MultipleChooseSettingsModel extends SettingsModel {
 }
 
 class UserSettingsModel extends SettingsModel {
-  UserSettingsModel() : super._() {
-    _userStreamController.sink.add(User("kek",
-        "https://avatars2.githubusercontent.com/u/65542314?s=460&u=76a8f688a9405f0af241c8147a35292e8f16f686&v=4"));
+  UserSettingsModel(UserRepository repository) : super._() {
+    User firebaseUser = repository.getUser();
+    _userStreamController.sink
+        .add(ChatUser(firebaseUser.displayName, firebaseUser.photoURL));
   }
 
-  final StreamController<User> _userStreamController = StreamController<User>();
+  final StreamController<ChatUser> _userStreamController = StreamController<ChatUser>();
 
-  Stream<User> get user => _userStreamController.stream;
+  Stream<ChatUser> get user => _userStreamController.stream;
 
   @override
   void dispose() {
@@ -98,10 +105,6 @@ class UserSettingsModel extends SettingsModel {
 class LogOutSettingsModel extends SettingsModel {
   LogOutSettingsModel(this.settingName) : super._();
   final String settingName;
-
-  logOut() {
-    // todo clean prefs
-  }
 
   @override
   dispose() {}

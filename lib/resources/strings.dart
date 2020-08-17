@@ -5,6 +5,8 @@ abstract class AuthScreenStrings {
   static const String authScreenPassword = "password";
   static const String authScreenSignIn = "Sign In";
   static const String authScreenSignInWithGoogle = "Sign In with Google";
+
+  static const String authScreenSignInError = "Sign In failed";
 }
 
 abstract class ChatListScreenStrings {
@@ -31,6 +33,7 @@ abstract class LogoutDialogStrings {
   static const String logoutDialogDetails = "Are you sure you want to logout?";
   static const String logoutDialogYes = "YES";
   static const String logoutDialogNo = "NO";
+  static const String logoutDialogFailed = "Log Out failed";
 }
 
 abstract class DebugStrings {
