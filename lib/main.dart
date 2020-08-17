@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_chat/routes.dart';
+
 import 'auth/auth_screen.dart';
 import 'chat_list/main_screen.dart';
 
