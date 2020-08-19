@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_chat/chat_list/models/groups_list_model.dart';
-import 'package:flutter_chat/resources/strings.dart';
+import 'package:flutter_chat/generated/l10n.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -16,7 +16,7 @@ class GroupListTab extends StatelessWidget {
           SmartRefresher(
             header: MaterialClassicHeader(),
             enablePullDown: true,
-            onRefresh: () => _onRefresh(),
+            onRefresh: () => _onRefresh(ctx),
             controller: _refreshController,
             child: ListView.builder(
               itemCount: chatList.items.length,
@@ -27,10 +27,10 @@ class GroupListTab extends StatelessWidget {
     );
   }
 
-  void _onRefresh() async {
+  void _onRefresh(BuildContext ctx) async {
     await Future.delayed(Duration(milliseconds: 1000));
     Fluttertoast.showToast(
-      msg: DebugStrings.debugInDevelopment,
+      msg: S.of(ctx).debugInDevelopment,
       backgroundColor: Colors.grey,
     );
     _refreshController.refreshCompleted();

@@ -1,8 +1,11 @@
 import 'dart:async';
 
+import 'package:flutter_chat/chat_list/models/lang_model.dart';
+import 'package:flutter_chat/generated/l10n.dart';
 import 'package:flutter_chat/models/multiple_select.dart';
-import 'package:flutter_chat/models/user_model.dart';
-import 'package:flutter_chat/repository/user_repository.dart';
+import 'package:flutter_chat/resources/prefs.dart';
+import 'package:flutter_chat/util/extensions.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 abstract class SettingsModel {
   SettingsModel._();
@@ -11,13 +14,13 @@ abstract class SettingsModel {
 
   factory SettingsModel.boolSetting(String name) = BoolSettingsModel;
 
-  factory SettingsModel.logOutSettings(String name) = LogOutSettingsModel;
+  factory SettingsModel.logOutSettings() = LogOutSettingsModel;
 
-  factory SettingsModel.userSettings(UserRepository repository) = UserSettingsModel;
+  factory SettingsModel.infoSettings() = InfoSettingsModel;
 
-  factory SettingsModel.multipleChoiceSetting(
-          String name, List<MultipleSelectValue<String>> valueOptions) =
-      MultipleChooseSettingsModel;
+  factory SettingsModel.userSettings() = UserSettingsModel;
+
+  factory SettingsModel.languageSetting() = LanguageSettingsModel;
 
   dispose();
 }
@@ -53,28 +56,56 @@ class BoolSettingsModel extends SettingsModel {
   }
 }
 
-class MultipleChooseSettingsModel extends SettingsModel {
-  MultipleChooseSettingsModel(this.settingName, this.valueOptions) : super._() {
-    // todo read value from prefs
-    updateValue(valueOptions.firstWhere((element) => element.isSelected));
+class UserSettingsModel extends SettingsModel {
+  UserSettingsModel() : super._();
+
+  @override
+  void dispose() {}
+}
+
+class LogOutSettingsModel extends SettingsModel {
+  LogOutSettingsModel() : super._();
+
+  @override
+  dispose() {}
+}
+
+class InfoSettingsModel extends SettingsModel {
+  InfoSettingsModel() : super._();
+
+  @override
+  dispose() {}
+}
+
+class LanguageSettingsModel extends SettingsModel {
+  LanguageSettingsModel() : super._() {
+    final languagesModel = S.delegate.supportedLocales.toLocalesModel();
+    valueOptions =
+        languagesModel.map((e) => MultipleSelectValue(e, false)).toList();
+    _updateFromPrefs();
   }
 
-  final String settingName;
-  List<MultipleSelectValue<String>> valueOptions;
+  List<MultipleSelectValue<LocaleModel>> valueOptions;
 
-  final StreamController<MultipleSelectValue<String>> _chosenValueController =
-      StreamController<MultipleSelectValue<String>>();
+  LangChangeNotifier _langChangeNotifier;
 
-  Stream<MultipleSelectValue<String>> get chosenValue =>
+  set langChangeNotifier(LangChangeNotifier notifier) =>
+      _langChangeNotifier = notifier;
+
+  final StreamController<MultipleSelectValue<LocaleModel>>
+      _chosenValueController =
+      StreamController<MultipleSelectValue<LocaleModel>>();
+
+  Stream<MultipleSelectValue<LocaleModel>> get chosenValue =>
       _chosenValueController.stream;
 
-  updateValue(MultipleSelectValue<String> newValue) {
-    // todo save value to prefs
-    valueOptions = valueOptions.map((MultipleSelectValue<String> e) {
-      MultipleSelectValue<String> updatedValue = e;
+  updateValue(MultipleSelectValue<LocaleModel> newValue) {
+    valueOptions = valueOptions?.map((MultipleSelectValue<LocaleModel> e) {
+      MultipleSelectValue<LocaleModel> updatedValue = e;
       updatedValue.isSelected = (e == newValue);
       return updatedValue;
-    }).toList();
+    })?.toList();
+    _langChangeNotifier?.updateLang(newValue.value.locale);
     _chosenValueController.sink.add(newValue);
   }
 
@@ -82,28 +113,16 @@ class MultipleChooseSettingsModel extends SettingsModel {
   dispose() {
     _chosenValueController.close();
   }
-}
 
-class UserSettingsModel extends SettingsModel {
-  UserSettingsModel(UserRepository repository) : super._() {
-    repository.getUser().then((value) => _userStreamController.sink
-        .add(User(value.displayName, value.photoUrl)));
+  _updateFromPrefs() async {
+    final prefs = await SharedPreferences.getInstance();
+    final currentLocale = prefs.getString(PrefsConst.language);
+    if (currentLocale != null) {
+      final supportedChosenLocale = valueOptions.find(
+          (element) => element.value.locale.compareWithCode(currentLocale));
+      if (supportedChosenLocale != null) {
+        updateValue(supportedChosenLocale);
+      }
+    }
   }
-
-  final StreamController<User> _userStreamController = StreamController<User>();
-
-  Stream<User> get user => _userStreamController.stream;
-
-  @override
-  void dispose() {
-    _userStreamController.close();
-  }
-}
-
-class LogOutSettingsModel extends SettingsModel {
-  LogOutSettingsModel(this.settingName) : super._();
-  final String settingName;
-
-  @override
-  dispose() {}
 }

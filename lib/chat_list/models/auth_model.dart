@@ -3,79 +3,59 @@ import 'dart:developer';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_chat/repository/user_repository.dart';
 
-class SignInModel extends ChangeNotifier {
+class AuthModel extends ChangeNotifier {
   final UserRepository _userRepository;
 
-  SignInModel(this._userRepository) {
-    _updateStatus(SignInResult.inProgress);
+  AuthModel(this._userRepository) {
+    _updateStatus(AuthResult.inProgress);
 
-    _userRepository.isSignedIn().then((bool value) {
-      _updateStatus(value ? SignInResult.success : SignInResult.none);
-    }).catchError((error) {
-      log(error);
-      _updateStatus(SignInResult.none);
-    });
+    _updateStatus(_userRepository.isSignedIn()
+        ? AuthResult.signedId
+        : AuthResult.none);
   }
 
-  SignInResult _result;
+  AuthResult _result;
 
-  SignInResult get result => _result;
+  AuthResult get result => _result;
 
   signInWithGoogle() {
     try {
       _userRepository.signInWithGoogle().listen((event) {
         _updateStatus(event);
       }, cancelOnError: true).onError(
-          (error) => _updateStatus(SignInResult.failed));
+          (error) => _updateStatus(AuthResult.failed));
     } catch (exception) {
       log(exception);
-      _updateStatus(SignInResult.failed);
+      _updateStatus(AuthResult.failed);
     }
   }
 
   signInWithCredentials(String email, String password) {
     try {
-      _updateStatus(SignInResult.inProgress);
+      _updateStatus(AuthResult.inProgress);
       _userRepository.signInWithCredentials(email, password).listen((event) {
         _updateStatus(event);
       }, cancelOnError: true).onError(
-          (error) => _updateStatus(SignInResult.failed));
+          (error) => _updateStatus(AuthResult.failed));
     } catch (exception) {
       log(exception);
-      _updateStatus(SignInResult.failed);
+      _updateStatus(AuthResult.failed);
     }
   }
-
-  _updateStatus(SignInResult newResult) {
-    _result = newResult;
-    notifyListeners();
-  }
-}
-
-class SignOutModel extends ChangeNotifier {
-  SignOutModel(this._userRepository);
-
-  final UserRepository _userRepository;
-
-  SignOutResult _result = SignOutResult.none;
-
-  SignOutResult get result => _result;
 
   signOut() {
     _userRepository
         .signOut()
-        .then((value) => _updateStatus(SignOutResult.success))
+        .then((value) => _updateStatus(AuthResult.signedOut))
         .catchError((error) {
       log(error);
-      _updateStatus(SignOutResult.failed);
+      _updateStatus(AuthResult.failed);
     });
   }
 
-  _updateStatus(SignOutResult newResult) {
+  _updateStatus(AuthResult newResult) {
     _result = newResult;
     notifyListeners();
   }
 }
-
-enum SignInResult { success, failed, inProgress, none }
-enum SignOutResult { success, failed, none }
+enum AuthResult { signedId, signedOut, failed, inProgress, none }

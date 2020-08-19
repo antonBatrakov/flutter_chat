@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_chat/chat_list/models/auth_model.dart';
+import 'package:flutter_chat/util/firebase_const.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class UserRepository {
@@ -13,81 +14,87 @@ class UserRepository {
       : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance,
         _googleSignIn = googleSignin ?? GoogleSignIn();
 
-  Stream<SignInResult> signInWithGoogle() async* {
-    yield SignInResult.inProgress;
+  Stream<AuthResult> signInWithGoogle() async* {
+    yield AuthResult.inProgress;
 
     final GoogleSignInAccount googleSignInAccount =
-    await _googleSignIn.signIn();
+        await _googleSignIn.signIn();
     final GoogleSignInAuthentication googleSignInAuthentication =
-    await googleSignInAccount.authentication;
+        await googleSignInAccount.authentication;
 
-    final AuthCredential credential = GoogleAuthProvider.getCredential(
+    final AuthCredential credential = GoogleAuthProvider.credential(
       accessToken: googleSignInAuthentication.accessToken,
       idToken: googleSignInAuthentication.idToken,
     );
 
-    final AuthResult authResult =
-    await _firebaseAuth.signInWithCredential(credential);
-    final FirebaseUser user = authResult.user;
+    final UserCredential authResult =
+        await _firebaseAuth.signInWithCredential(credential);
+    final User user = authResult.user;
 
     if (user.isAnonymous) {
-      yield SignInResult.failed;
+      yield AuthResult.failed;
       return;
     }
     if (await user.getIdToken() == null) {
-      yield SignInResult.failed;
+      yield AuthResult.failed;
       return;
     }
 
-    final FirebaseUser currentUser = await _firebaseAuth.currentUser();
+    final User currentUser = _firebaseAuth.currentUser;
     if (user.uid != currentUser.uid) {
-      yield SignInResult.failed;
+      yield AuthResult.failed;
       return;
     }
 
-    FirebaseUser firebaseUser =
+    User firebaseUser =
         (await _firebaseAuth.signInWithCredential(credential)).user;
 
     if (firebaseUser != null) {
       _updateUser(firebaseUser);
     } else {
-      yield SignInResult.failed;
+      yield AuthResult.failed;
       return;
     }
 
-    yield SignInResult.success;
+    yield AuthResult.signedId;
   }
 
-  Stream<SignInResult> signInWithCredentials(
+  Stream<AuthResult> signInWithCredentials(
       String email, String password) async* {
-    yield SignInResult.inProgress;
-    AuthResult authResult = await _firebaseAuth
-        .signInWithEmailAndPassword(
-      email: email,
-      password: password,
-    ).catchError((error) async* {
-      log(error);
-    });
-    FirebaseUser user = authResult.user;
-    if (user == null) {
-      await signUp(email: email, password: password).then((value) {
-        user = value.user;
-      }).catchError((error) async* {
-        yield SignInResult.failed;
-        return;
-      });
+    yield AuthResult.inProgress;
+    UserCredential authResult;
+    try {
+      authResult = await _firebaseAuth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+    } catch (e) {
+      log(e.toString());
+    }
+    User user = authResult?.user;
+    try {
+      if (user == null) {
+        await signUp(email: email, password: password).then((value) {
+          user = value.user;
+        }).catchError((error) async* {
+          yield AuthResult.failed;
+          return;
+        });
+      }
+    } catch (e) {
+      log(e);
     }
 
     if (user != null) {
       _updateUser(user);
     } else {
-      yield SignInResult.failed;
+      yield AuthResult.failed;
       return;
     }
-    yield SignInResult.success;
+    yield AuthResult.signedId;
   }
 
-  Future<AuthResult> signUp({String email, String password}) async {
+  Future<UserCredential> signUp({String email, String password}) async {
     return await _firebaseAuth.createUserWithEmailAndPassword(
       email: email,
       password: password,
@@ -101,37 +108,37 @@ class UserRepository {
     ]);
   }
 
-  Future<bool> isSignedIn() async {
-    final currentUser = await _firebaseAuth.currentUser();
+  bool isSignedIn() {
+    final currentUser = _firebaseAuth.currentUser;
     return currentUser != null;
   }
 
-  Future<FirebaseUser> getUser() async {
-    return (await _firebaseAuth.currentUser());
+  User getUser() {
+    return _firebaseAuth.currentUser;
   }
 
-  _updateUser(FirebaseUser firebaseUser) async {
+  _updateUser(User firebaseUser) async {
     // Check is already sign up
 
     if (await _isFirstTimeUser(firebaseUser)) {
       // Update data to server if new user
-      Firestore.instance
-          .collection('users')
-          .document(firebaseUser.uid)
-          .setData({
-        'nickname': firebaseUser.displayName,
-        'photoUrl': firebaseUser.photoUrl,
-        'id': firebaseUser.uid
+      FirebaseFirestore.instance
+          .collection(FirebaseConst.users)
+          .doc(firebaseUser.uid)
+          .set({
+        FirebaseConst.nickname: firebaseUser.displayName ?? firebaseUser.email,
+        FirebaseConst.photoUrl: firebaseUser.photoURL,
+        FirebaseConst.id: firebaseUser.uid
       });
     }
   }
 
-  Future<bool> _isFirstTimeUser(FirebaseUser firebaseUser) async {
-    final QuerySnapshot result = await Firestore.instance
-        .collection('users')
-        .where('id', isEqualTo: firebaseUser.uid)
-        .getDocuments();
-    final List<DocumentSnapshot> documents = result.documents;
+  Future<bool> _isFirstTimeUser(User firebaseUser) async {
+    final QuerySnapshot result = await FirebaseFirestore.instance
+        .collection(FirebaseConst.users)
+        .where(FirebaseConst.id, isEqualTo: firebaseUser.uid)
+        .get();
+    final List<DocumentSnapshot> documents = result.docs;
     return documents.length == 0;
   }
 }

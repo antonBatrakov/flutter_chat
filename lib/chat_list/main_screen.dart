@@ -3,9 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_chat/chat_list/main_page_tabs/chat_tab.dart';
 import 'package:flutter_chat/chat_list/main_page_tabs/groups_tab.dart';
 import 'package:flutter_chat/chat_list/main_page_tabs/settings_tab.dart';
-import 'package:flutter_chat/chat_list/models/chat_list_model.dart';
 import 'package:flutter_chat/chat_list/models/groups_list_model.dart';
-import 'package:flutter_chat/resources/strings.dart';
+import 'package:flutter_chat/generated/l10n.dart';
 import 'package:provider/provider.dart';
 
 class MainPage extends StatefulWidget {
@@ -15,31 +14,17 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   TabController _tabController;
-  AnimationController _fabAnimController;
 
   @override
   void initState() {
     super.initState();
-    _fabAnimController = AnimationController(
-      value: 1,
-      vsync: this,
-      duration: Duration(milliseconds: 200),
-    );
 
     _tabController = TabController(length: 3, vsync: this);
-    _tabController.addListener(() {
-      if (_tabController.index == 2) {
-        _fabAnimController.reverse();
-      } else {
-        _fabAnimController.forward();
-      }
-    });
   }
 
   @override
   void dispose() {
     _tabController.dispose();
-    _fabAnimController.dispose();
     super.dispose();
   }
 
@@ -49,44 +34,32 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
       providers: [
         ChangeNotifierProvider(
           // todo fetch
-          create: (ctx) => ChatListSource(),
-        ),
-        ChangeNotifierProvider(
-          // todo fetch
           create: (ctx) => GroupListSource(),
         )
       ],
       builder: (ctx, child) => WillPopScope(
         onWillPop: () => _showCloseDialog(context),
         child: Scaffold(
-          floatingActionButton: ScaleTransition(
-            scale: _fabAnimController,
-            child: FloatingActionButton(
-              onPressed: () =>
-                  Provider.of<ChatListSource>(ctx, listen: false).items = [],
-              child: Icon(Icons.delete),
-            ),
-          ),
           appBar: AppBar(
             leading: IconButton(
               icon: Icon(Icons.arrow_back),
               onPressed: () => _showCloseDialog(context),
             ),
-            title: Text(ChatListScreenStrings.chatScreenTitle),
+            title: Text(S.of(context).chatScreenTitle),
             bottom: TabBar(
               controller: _tabController,
               tabs: <Widget>[
                 Tab(
                   icon: Icon(Icons.chat),
-                  text: ChatListScreenStrings.chatScreenChats,
+                  text: S.of(context).chatScreenChats,
                 ),
                 Tab(
                   icon: Icon(Icons.group),
-                  text: ChatListScreenStrings.chatScreenGroups,
+                  text: S.of(context).chatScreenGroups,
                 ),
                 Tab(
                   icon: Icon(Icons.settings),
-                  text: ChatListScreenStrings.chatScreenSettings,
+                  text: S.of(context).chatScreenSettings,
                 )
               ],
             ),
@@ -109,8 +82,8 @@ _showCloseDialog(BuildContext context) {
   showDialog(
       context: context,
       builder: (_) => AlertDialog(
-            title: Text(CloseDialogStrings.closeDialogTitle),
-            content: Text(CloseDialogStrings.closeDialogDetails),
+            title: Text(S.of(context).closeDialogTitle),
+            content: Text(S.of(context).closeDialogDetails),
             actions: <Widget>[
               ButtonBar(
                 children: <Widget>[
@@ -118,14 +91,14 @@ _showCloseDialog(BuildContext context) {
                     onPressed: () => SystemChannels.platform
                         .invokeMethod('SystemNavigator.pop'),
                     child: Text(
-                      CloseDialogStrings.closeDialogYes,
+                      S.of(context).closeDialogYes,
                       style: TextStyle(color: Colors.blue, fontSize: 14),
                     ),
                   ),
                   FlatButton(
                     onPressed: () => Navigator.of(context).pop(),
                     child: Text(
-                      CloseDialogStrings.closeDialogNo,
+                      S.of(context).closeDialogNo,
                       style: TextStyle(color: Colors.blue, fontSize: 14),
                     ),
                   ),
@@ -133,4 +106,13 @@ _showCloseDialog(BuildContext context) {
               )
             ],
           ));
+}
+
+class Kek extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      
+    );
+  }
 }

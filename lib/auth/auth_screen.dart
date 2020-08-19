@@ -4,50 +4,49 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_chat/auth/password_field.dart';
 import 'package:flutter_chat/chat_list/models/auth_model.dart';
+import 'package:flutter_chat/generated/l10n.dart';
 import 'package:flutter_chat/repository/user_repository.dart';
 import 'package:flutter_chat/resources/assets.dart';
-import 'package:flutter_chat/resources/strings.dart';
 import 'package:flutter_chat/routes.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 
 class AuthPage extends StatelessWidget {
-  final UserRepository _userRepository = UserRepository();
-
   @override
   Widget build(BuildContext context) {
+    final userRepository = Provider.of<UserRepository>(context, listen: false);
     return Scaffold(
       resizeToAvoidBottomPadding: false,
       resizeToAvoidBottomInset: false,
       body: MultiProvider(
         providers: [
-          ChangeNotifierProvider(create: (_) => SignInModel(_userRepository)),
+          ChangeNotifierProvider(create: (_) => AuthModel(userRepository)),
           ChangeNotifierProvider(create: (_) => PasswordModel()),
         ],
-        builder: (providerContext, _) => Consumer<SignInModel>(
+        builder: (providerContext, _) => Consumer<AuthModel>(
           builder: (consumerContext, value, child) {
             switch (value.result) {
-              case SignInResult.success:
+              case AuthResult.signedId:
                 WidgetsBinding.instance.addPostFrameCallback((_) {
                   Navigator.pushReplacementNamed(
                       context, RouteNames.mainScreen);
                 });
                 return child;
-              case SignInResult.failed:
+              case AuthResult.failed:
                 Fluttertoast.showToast(
-                  msg: AuthScreenStrings.authScreenSignInError,
+                  msg: S.of(context).authScreenSignInError,
                   backgroundColor: Colors.grey,
                 );
                 return child;
-              case SignInResult.inProgress:
+              case AuthResult.inProgress:
                 return Stack(children: <Widget>[
                   child,
                   Container(
                       color: Colors.white60,
                       child: Center(child: const CircularProgressIndicator())),
                 ]);
-              case SignInResult.none:
+              case AuthResult.none:
                 return child;
               default:
                 return child;
@@ -85,7 +84,7 @@ class AuthFields extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    _authScreenHeader(),
+                    _authScreenHeader(context),
                     _emailTextField(context, _emailTextFieldController),
                     _passwordTextField(_passwordTextFieldController),
                     Padding(
@@ -116,7 +115,7 @@ class AuthFields extends StatelessWidget {
   }
 }
 
-Widget _authScreenHeader() => Row(
+Widget _authScreenHeader(BuildContext context) => Row(
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
@@ -126,7 +125,7 @@ Widget _authScreenHeader() => Row(
           size: 110,
         ),
         Text(
-          AuthScreenStrings.authScreenTitle,
+          S.of(context).authScreenTitle,
           style: TextStyle(
               color: Colors.black, fontWeight: FontWeight.w400, fontSize: 26),
         )
@@ -151,7 +150,7 @@ Widget _passwordTextField(TextEditingController controller) =>
                   onPressed:() => value.toggleObscure(),
                 ),
                 alignLabelWithHint: true,
-                labelText: AuthScreenStrings.authScreenPassword,
+                labelText: S.of(ctx).authScreenPassword,
                 border: UnderlineInputBorder(),
               ),
             ),
@@ -171,7 +170,7 @@ Widget _emailTextField(BuildContext context,
         keyboardType: TextInputType.emailAddress,
         decoration: InputDecoration(
           alignLabelWithHint: true,
-          labelText: AuthScreenStrings.authScreenEmail,
+          labelText: S.of(context).authScreenEmail,
           border: UnderlineInputBorder(),
         ),
       ),
@@ -188,11 +187,11 @@ Widget _signInButton(BuildContext context,
         borderRadius: BorderRadius.all(Radius.circular(30)),
       ),
       child: Text(
-        AuthScreenStrings.authScreenSignIn,
+        S.of(context).authScreenSignIn,
         style: TextStyle(color: Colors.white),
       ),
       onPressed: () =>
-          Provider.of<SignInModel>(
+          Provider.of<AuthModel>(
             context,
             listen: false,
           ).signInWithCredentials(
@@ -201,7 +200,7 @@ Widget _signInButton(BuildContext context,
 
 Widget _googleSignInButton(BuildContext context) => OutlineButton(
       splashColor: Colors.grey,
-      onPressed: () => Provider.of<SignInModel>(
+      onPressed: () => Provider.of<AuthModel>(
         context,
         listen: false,
       ).signInWithGoogle(),
@@ -219,7 +218,7 @@ Widget _googleSignInButton(BuildContext context) => OutlineButton(
             Padding(
               padding: const EdgeInsets.only(left: 10),
               child: Text(
-                AuthScreenStrings.authScreenSignInWithGoogle,
+                S.of(context).authScreenSignInWithGoogle,
                 style: TextStyle(
                   color: Colors.grey,
                 ),
