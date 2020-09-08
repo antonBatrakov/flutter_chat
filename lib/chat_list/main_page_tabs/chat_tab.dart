@@ -72,7 +72,7 @@ class ChatListItem extends StatelessWidget {
                 arguments: ChatArg(_chat));
           },
           leading: Hero(
-            tag: HeroTags.avatarTag,
+            tag: HeroTags.avatarTag + _chat.id,
             child: CircleAvatar(
               backgroundImage: NetworkImage(_chat?.photoUrl ?? ""),
             ),

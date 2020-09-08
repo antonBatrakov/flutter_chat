@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_chat/api/info_api.dart';
 import 'package:flutter_chat/chat_list/models/lang_model.dart';
+import 'package:flutter_chat/repository/chat_repository.dart';
 import 'package:flutter_chat/repository/user_repository.dart';
 import 'package:flutter_chat/routes.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -53,6 +54,9 @@ class ChatApp extends StatelessWidget {
         ),
         Provider<UserRepository>(
           create: (_) => UserRepository(),
+        ),
+        Provider<ChatRepository>(
+          create: (_) => ChatRepository(),
         ),
         ChangeNotifierProvider<LangChangeNotifier>(
           create: (_) => LangChangeNotifier(),
