@@ -1,4 +1,5 @@
 {
+  "appTitle": "Flutter Chat",
   "authScreenTitle": "Chat",
   "authScreenEmail": "email",
   "authScreenPassword": "password",
@@ -24,5 +25,18 @@
   "infoDialogTitle": "Info",
   "infoDialogClose": "CLOSE",
   "debugInDevelopment": "In development",
-  "typeYourMessage": "Type your message..."
+  "typeYourMessage": "Type your message...",
+  "locationDialogTitle": "Location",
+  "locationDialogSearching": "Searching...",
+  "locationDialogYes": "GO TO SETTINGS",
+  "locationDialogNo": "CANCEL",
+  "locationDialogContent": "If you need to share location, you must provide permission in app settings.",
+  "storageDialogTitle": "Storage",
+  "storageDialogSearching": "Searching...",
+  "storageDialogYes": "GO TO SETTINGS",
+  "storageDialogSend": "SEND",
+  "storageDialogNo": "CANCEL",
+  "storageDialogContent": "If you need to share media, you must provide permission in app settings.",
+  "chatBottomSheetShareLocation": "Share location",
+  "chatBottomSheetShareMedia": "Share video"
 }

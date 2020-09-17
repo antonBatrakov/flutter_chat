@@ -13,4 +13,15 @@ abstract class FirebaseConst {
   static final content = 'content';
   static final type = 'type';
   static final chattingWith = 'chattingWith';
+
+  // Chat Location
+  static final latitude = 'latitude';
+  static final longitude = 'longitude';
+
+  // Storage
+  static final videoPath = 'videoPath';
+}
+
+abstract class GoogleMapMarkIds {
+  static final chatMarkId = "chatMarkId";
 }

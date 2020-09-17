@@ -33,6 +33,16 @@ class S {
     return Localizations.of<S>(context, S);
   }
 
+  /// `Flutter Chat`
+  String get appTitle {
+    return Intl.message(
+      'Flutter Chat',
+      name: 'appTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Chat`
   String get authScreenTitle {
     return Intl.message(
@@ -288,6 +298,136 @@ class S {
     return Intl.message(
       'Type your message...',
       name: 'typeYourMessage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Location`
+  String get locationDialogTitle {
+    return Intl.message(
+      'Location',
+      name: 'locationDialogTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Searching...`
+  String get locationDialogSearching {
+    return Intl.message(
+      'Searching...',
+      name: 'locationDialogSearching',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `GO TO SETTINGS`
+  String get locationDialogYes {
+    return Intl.message(
+      'GO TO SETTINGS',
+      name: 'locationDialogYes',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `CANCEL`
+  String get locationDialogNo {
+    return Intl.message(
+      'CANCEL',
+      name: 'locationDialogNo',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `If you need to share location, you must provide permission in app settings.`
+  String get locationDialogContent {
+    return Intl.message(
+      'If you need to share location, you must provide permission in app settings.',
+      name: 'locationDialogContent',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Storage`
+  String get storageDialogTitle {
+    return Intl.message(
+      'Storage',
+      name: 'storageDialogTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Searching...`
+  String get storageDialogSearching {
+    return Intl.message(
+      'Searching...',
+      name: 'storageDialogSearching',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `GO TO SETTINGS`
+  String get storageDialogYes {
+    return Intl.message(
+      'GO TO SETTINGS',
+      name: 'storageDialogYes',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `SEND`
+  String get storageDialogSend {
+    return Intl.message(
+      'SEND',
+      name: 'storageDialogSend',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `CANCEL`
+  String get storageDialogNo {
+    return Intl.message(
+      'CANCEL',
+      name: 'storageDialogNo',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `If you need to share media, you must provide permission in app settings.`
+  String get storageDialogContent {
+    return Intl.message(
+      'If you need to share media, you must provide permission in app settings.',
+      name: 'storageDialogContent',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Share location`
+  String get chatBottomSheetShareLocation {
+    return Intl.message(
+      'Share location',
+      name: 'chatBottomSheetShareLocation',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Share video`
+  String get chatBottomSheetShareMedia {
+    return Intl.message(
+      'Share video',
+      name: 'chatBottomSheetShareMedia',
       desc: '',
       args: [],
     );

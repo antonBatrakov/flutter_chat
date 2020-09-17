@@ -21,12 +21,15 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static _notInlinedMessages(_) => <String, Function> {
+    "appTitle" : MessageLookupByLibrary.simpleMessage("Flutter Чат"),
     "authScreenEmail" : MessageLookupByLibrary.simpleMessage("email"),
     "authScreenPassword" : MessageLookupByLibrary.simpleMessage("пароль"),
     "authScreenSignIn" : MessageLookupByLibrary.simpleMessage("Войти"),
     "authScreenSignInError" : MessageLookupByLibrary.simpleMessage("Ошибка входа"),
     "authScreenSignInWithGoogle" : MessageLookupByLibrary.simpleMessage("Войти при помощи Google"),
     "authScreenTitle" : MessageLookupByLibrary.simpleMessage("Chat"),
+    "chatBottomSheetShareLocation" : MessageLookupByLibrary.simpleMessage("Геопозиция"),
+    "chatBottomSheetShareMedia" : MessageLookupByLibrary.simpleMessage("Видео"),
     "chatScreenChats" : MessageLookupByLibrary.simpleMessage("чаты"),
     "chatScreenGroups" : MessageLookupByLibrary.simpleMessage("группы"),
     "chatScreenSettings" : MessageLookupByLibrary.simpleMessage("настройки"),
@@ -38,6 +41,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "debugInDevelopment" : MessageLookupByLibrary.simpleMessage("В разработке"),
     "infoDialogClose" : MessageLookupByLibrary.simpleMessage("ЗАКРЫТЬ"),
     "infoDialogTitle" : MessageLookupByLibrary.simpleMessage("Информация"),
+    "locationDialogContent" : MessageLookupByLibrary.simpleMessage("Если вы хотите поделиться геопозицией, вы должны предоставить разрешение в настройках приложения."),
+    "locationDialogNo" : MessageLookupByLibrary.simpleMessage("ОТМЕНА"),
+    "locationDialogSearching" : MessageLookupByLibrary.simpleMessage("Поиск..."),
+    "locationDialogTitle" : MessageLookupByLibrary.simpleMessage("Геопозиция"),
+    "locationDialogYes" : MessageLookupByLibrary.simpleMessage("ПЕРЕЙТИ В НАСТРОЙКИ"),
     "logoutDialogDetails" : MessageLookupByLibrary.simpleMessage("Вы уверены что хотите выйти?"),
     "logoutDialogFailed" : MessageLookupByLibrary.simpleMessage("Ошибка"),
     "logoutDialogNo" : MessageLookupByLibrary.simpleMessage("НЕТ"),
@@ -46,6 +54,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "settingsScreenChangeLangTitle" : MessageLookupByLibrary.simpleMessage("Выбрать язык"),
     "settingsScreenFetching" : MessageLookupByLibrary.simpleMessage("Загрузка..."),
     "settingsScreenLogout" : MessageLookupByLibrary.simpleMessage("Выйти"),
+    "storageDialogContent" : MessageLookupByLibrary.simpleMessage("Если вы хотите поделиться файлом, вы должны предоставить разрешение в настройках приложения."),
+    "storageDialogNo" : MessageLookupByLibrary.simpleMessage("ОТМЕНА"),
+    "storageDialogSearching" : MessageLookupByLibrary.simpleMessage("Поиск..."),
+    "storageDialogSend" : MessageLookupByLibrary.simpleMessage("ОТПРАВИТЬ"),
+    "storageDialogTitle" : MessageLookupByLibrary.simpleMessage("Хранилище"),
+    "storageDialogYes" : MessageLookupByLibrary.simpleMessage("ПЕРЕЙТИ В НАСТРОЙКИ"),
     "typeYourMessage" : MessageLookupByLibrary.simpleMessage("Сообщение...")
   };
 }

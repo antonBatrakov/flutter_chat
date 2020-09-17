@@ -21,12 +21,15 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static _notInlinedMessages(_) => <String, Function> {
+    "appTitle" : MessageLookupByLibrary.simpleMessage("Flutter Chat"),
     "authScreenEmail" : MessageLookupByLibrary.simpleMessage("email"),
     "authScreenPassword" : MessageLookupByLibrary.simpleMessage("password"),
     "authScreenSignIn" : MessageLookupByLibrary.simpleMessage("Sign In"),
     "authScreenSignInError" : MessageLookupByLibrary.simpleMessage("Sign In failed"),
     "authScreenSignInWithGoogle" : MessageLookupByLibrary.simpleMessage("Sign In with Google"),
     "authScreenTitle" : MessageLookupByLibrary.simpleMessage("Chat"),
+    "chatBottomSheetShareLocation" : MessageLookupByLibrary.simpleMessage("Share location"),
+    "chatBottomSheetShareMedia" : MessageLookupByLibrary.simpleMessage("Share video"),
     "chatScreenChats" : MessageLookupByLibrary.simpleMessage("chats"),
     "chatScreenGroups" : MessageLookupByLibrary.simpleMessage("groups"),
     "chatScreenSettings" : MessageLookupByLibrary.simpleMessage("settings"),
@@ -38,6 +41,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "debugInDevelopment" : MessageLookupByLibrary.simpleMessage("In development"),
     "infoDialogClose" : MessageLookupByLibrary.simpleMessage("CLOSE"),
     "infoDialogTitle" : MessageLookupByLibrary.simpleMessage("Info"),
+    "locationDialogContent" : MessageLookupByLibrary.simpleMessage("If you need to share location, you must provide permission in app settings."),
+    "locationDialogNo" : MessageLookupByLibrary.simpleMessage("CANCEL"),
+    "locationDialogSearching" : MessageLookupByLibrary.simpleMessage("Searching..."),
+    "locationDialogTitle" : MessageLookupByLibrary.simpleMessage("Location"),
+    "locationDialogYes" : MessageLookupByLibrary.simpleMessage("GO TO SETTINGS"),
     "logoutDialogDetails" : MessageLookupByLibrary.simpleMessage("Are you sure you want to logout?"),
     "logoutDialogFailed" : MessageLookupByLibrary.simpleMessage("Log Out failed"),
     "logoutDialogNo" : MessageLookupByLibrary.simpleMessage("NO"),
@@ -46,6 +54,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "settingsScreenChangeLangTitle" : MessageLookupByLibrary.simpleMessage("Choose language"),
     "settingsScreenFetching" : MessageLookupByLibrary.simpleMessage("Fetching..."),
     "settingsScreenLogout" : MessageLookupByLibrary.simpleMessage("Log out"),
+    "storageDialogContent" : MessageLookupByLibrary.simpleMessage("If you need to share media, you must provide permission in app settings."),
+    "storageDialogNo" : MessageLookupByLibrary.simpleMessage("CANCEL"),
+    "storageDialogSearching" : MessageLookupByLibrary.simpleMessage("Searching..."),
+    "storageDialogSend" : MessageLookupByLibrary.simpleMessage("SEND"),
+    "storageDialogTitle" : MessageLookupByLibrary.simpleMessage("Storage"),
+    "storageDialogYes" : MessageLookupByLibrary.simpleMessage("GO TO SETTINGS"),
     "typeYourMessage" : MessageLookupByLibrary.simpleMessage("Type your message...")
   };
 }
