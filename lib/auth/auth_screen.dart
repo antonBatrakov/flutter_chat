@@ -27,7 +27,7 @@ class AuthPage extends StatelessWidget {
         builder: (providerContext, _) => Consumer<AuthModel>(
           builder: (consumerContext, value, child) {
             switch (value.result) {
-              case AuthResult.signedId:
+              case AuthResult.signedIn:
                 WidgetsBinding.instance.addPostFrameCallback((_) {
                   Navigator.pushReplacementNamed(
                       context, RouteNames.mainScreen);

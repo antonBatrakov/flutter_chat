@@ -56,7 +56,7 @@ class UserRepository {
       return;
     }
 
-    yield AuthResult.signedId;
+    yield AuthResult.signedIn;
   }
 
   Stream<AuthResult> signInWithCredentials(
@@ -91,7 +91,7 @@ class UserRepository {
       yield AuthResult.failed;
       return;
     }
-    yield AuthResult.signedId;
+    yield AuthResult.signedIn;
   }
 
   Future<UserCredential> signUp({String email, String password}) async {
