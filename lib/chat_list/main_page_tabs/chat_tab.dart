@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_chat/chat/chat_arg.dart';
+import 'package:flutter_chat/chat_list/main_screen_keys.dart';
 import 'package:flutter_chat/chat_list/models/chat_list_model.dart';
 import 'package:flutter_chat/generated/l10n.dart';
+import 'package:flutter_chat/resources/assets.dart';
 import 'package:flutter_chat/routes.dart';
 import 'package:flutter_chat/util/hero_tags.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -31,6 +33,7 @@ class _ChatListTabState extends State<ChatListTab> {
               builder: (context, snapshot) {
                 if (snapshot.hasData && snapshot.data.isNotEmpty) {
                   return ListView.builder(
+                    key: Key(MainScreenKeys.chatsList),
                     itemCount: snapshot.data.length,
                     itemBuilder: (ctx, position) =>
                         ChatListItem(snapshot.data[position]),
@@ -74,7 +77,9 @@ class ChatListItem extends StatelessWidget {
           leading: Hero(
             tag: HeroTags.avatarTag + _chat.id,
             child: CircleAvatar(
-              backgroundImage: NetworkImage(_chat?.photoUrl ?? ""),
+              backgroundImage: _chat?.photoUrl != null
+                  ? NetworkImage(_chat?.photoUrl)
+                  : AssetImage(AuthImg.googleSignInLogo),
             ),
           ),
           title: Text(

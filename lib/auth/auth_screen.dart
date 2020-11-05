@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_chat/auth/auth_widget_keys.dart';
 import 'package:flutter_chat/auth/password_field.dart';
 import 'package:flutter_chat/chat_list/models/auth_model.dart';
 import 'package:flutter_chat/generated/l10n.dart';
@@ -140,6 +141,8 @@ Widget _passwordTextField(TextEditingController controller) =>
       child: Consumer<PasswordModel>(
         builder: (ctx, value, child) =>
             TextField(
+              autofocus: true,
+              key: Key(AuthKeys.passwordTextFieldKey),
               controller: controller,
               textInputAction: TextInputAction.done,
               obscureText: value.isObscure,
@@ -164,6 +167,8 @@ Widget _emailTextField(BuildContext context,
         vertical: 6,
       ),
       child: TextField(
+        autofocus: true,
+        key: Key(AuthKeys.emailTextFieldKey),
         controller: controller,
         onSubmitted: (_) => FocusScope.of(context).nextFocus(),
         textInputAction: TextInputAction.next,
@@ -180,6 +185,7 @@ Widget _signInButton(BuildContext context,
     TextEditingController emailTextFieldController,
     TextEditingController passwordTextFieldController) =>
     MaterialButton(
+      key: Key(AuthKeys.loginButtonKey),
       padding: EdgeInsets.all(15),
       color: Colors.blue,
       minWidth: double.infinity,
@@ -190,12 +196,13 @@ Widget _signInButton(BuildContext context,
         S.of(context).authScreenSignIn,
         style: TextStyle(color: Colors.white),
       ),
-      onPressed: () =>
-          Provider.of<AuthModel>(
-            context,
-            listen: false,
-          ).signInWithCredentials(
-              emailTextFieldController.text, passwordTextFieldController.text),
+      onPressed: () {
+        Provider.of<AuthModel>(
+          context,
+          listen: false,
+        ).signInWithCredentials(
+            emailTextFieldController.text, passwordTextFieldController.text);
+      }
     );
 
 Widget _googleSignInButton(BuildContext context) => OutlineButton(

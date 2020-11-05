@@ -1,23 +1,19 @@
-import 'dart:async';
-import 'dart:io';
-
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat/chat/video_view.dart';
 import 'package:flutter_chat/generated/l10n.dart';
 import 'package:flutter_chat/repository/chat_repository.dart';
+import 'package:flutter_chat/resources/assets.dart';
 import 'package:flutter_chat/util/firebase_const.dart';
 import 'package:flutter_chat/util/hero_tags.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
-import 'package:location/location.dart' hide PermissionStatus;
-import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 import 'chat_arg.dart';
+import 'common/bottom_sheet.dart';
 import 'models/chat_model.dart';
 
 class ChatPage extends StatelessWidget {
@@ -52,7 +48,9 @@ class ChatPage extends StatelessWidget {
               leading: Hero(
                 tag: HeroTags.avatarTag + _arg.chat.id,
                 child: CircleAvatar(
-                  backgroundImage: NetworkImage(_arg.chat?.photoUrl ?? ""),
+                  backgroundImage: _arg.chat?.photoUrl != null
+                      ? NetworkImage(_arg.chat?.photoUrl)
+                      : AssetImage(AuthImg.googleSignInLogo),
                 ),
               ),
             ),
@@ -233,9 +231,11 @@ class ChatPage extends StatelessWidget {
                                 }
                                 if (!snapshot.hasData ||
                                     !(snapshot.data is String)) {
-                                  return Center(child: CircularProgressIndicator());
+                                  return Center(
+                                      child: CircularProgressIndicator());
                                 } else {
-                                  return VideoView(videoFromWebToPlay: snapshot.data);
+                                  return VideoView(
+                                      videoFromWebToPlay: snapshot.data);
                                 }
                               },
                             ),
@@ -388,268 +388,4 @@ class ChatPage extends StatelessWidget {
           color: Colors.white),
     );
   }
-}
-
-class ShareBottomSheet extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return BottomSheet(
-      enableDrag: true,
-      onClosing: () {},
-      builder: (context) => Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        mainAxisSize: MainAxisSize.max,
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 50),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                IconButton(
-                    icon: const Icon(
-                      Icons.location_on,
-                      color: Colors.blue,
-                    ),
-                    onPressed: () async {
-                      Navigator.pop(context);
-                      PermissionStatus status =
-                          await requestLocationPermission(context);
-                      if (status == PermissionStatus.granted) {
-                        showDialog(
-                          context: context,
-                          builder: (_) =>
-                              ChangeNotifierProvider<ChatModel>.value(
-                            value: Provider.of<ChatModel>(context),
-                            builder: (context, child) => AlertDialog(
-                              title:
-                                  Text(S.of(context).locationDialogSearching),
-                              content: FutureBuilder<LocationData>(
-                                future: Location().getLocation(),
-                                builder: (context, snapshot) {
-                                  if (!snapshot.hasData) {
-                                    return Container(
-                                      height: 200,
-                                      child: Center(
-                                        child: CircularProgressIndicator(),
-                                      ),
-                                    );
-                                  } else if (snapshot.hasError) {
-                                    Navigator.of(context).pop();
-                                    return Container(
-                                      height: 200,
-                                      child: Text(
-                                        snapshot.error,
-                                      ),
-                                    );
-                                  } else {
-                                    Provider.of<ChatModel>(context,
-                                            listen: false)
-                                        .sendMessage({
-                                      FirebaseConst.longitude:
-                                          snapshot.data.longitude,
-                                      FirebaseConst.latitude:
-                                          snapshot.data.latitude,
-                                    }, ChatMessageType.Map.index);
-                                    Navigator.of(context).pop();
-                                    return Container();
-                                  }
-                                },
-                              ),
-                            ),
-                          ),
-                        );
-                      }
-                    }),
-                Text(S.of(context).chatBottomSheetShareLocation),
-              ],
-            ),
-          ),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              IconButton(
-                  icon: const Icon(
-                    Icons.perm_media,
-                    color: Colors.blue,
-                  ),
-                  onPressed: () async {
-                    Navigator.pop(context);
-                    PermissionStatus status =
-                        await requestStoragePermission(context);
-                    if (status == PermissionStatus.granted) {
-                      showDialog(
-                        context: context,
-                        builder: (_) => ChangeNotifierProvider<ChatModel>.value(
-                          value: Provider.of<ChatModel>(context),
-                          builder: (context, child) => FutureBuilder<String>(
-                            future: FilePicker.getFilePath(
-                              type: FileType.video,
-                            ),
-                            builder: (context, snapshot) {
-                              if (!snapshot.hasData) {
-                                return Container(
-                                  height: 200,
-                                  child: Center(
-                                    child: CircularProgressIndicator(),
-                                  ),
-                                );
-                              } else if (snapshot.hasError) {
-                                Navigator.of(context).pop();
-                                return Container(
-                                  height: 200,
-                                  child: Text(
-                                    snapshot.error,
-                                  ),
-                                );
-                              } else {
-                                return _VideoAttach(snapshot.data);
-                              }
-                            },
-                          ),
-                        ),
-                      );
-                    }
-                  }),
-              Text(
-                S.of(context).chatBottomSheetShareMedia,
-              ),
-            ],
-          )
-        ],
-      ),
-    );
-  }
-
-  Future<PermissionStatus> requestLocationPermission(
-      BuildContext context) async {
-    final PermissionStatus permissionRequestResult =
-        await Permission.location.request();
-    if (permissionRequestResult != PermissionStatus.granted) {
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: Text(S.of(context).locationDialogTitle),
-          content: Text(S.of(context).locationDialogContent),
-          actions: [
-            FlatButton(
-                onPressed: () => {Navigator.of(context).pop()},
-                child: Text(S.of(context).locationDialogNo)),
-            FlatButton(
-                onPressed: () async {
-                  bool isOpened = await openAppSettings();
-                  if (isOpened) {
-                    Navigator.of(context).pop();
-                  }
-                },
-                child: Text(S.of(context).locationDialogYes))
-          ],
-        ),
-      );
-    }
-
-    return await Permission.location.status;
-  }
-
-  Future<PermissionStatus> requestStoragePermission(
-      BuildContext context) async {
-    final PermissionStatus permissionRequestResult =
-        await Permission.storage.request();
-    if (permissionRequestResult != PermissionStatus.granted) {
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: Text(S.of(context).storageDialogTitle),
-          content: Text(S.of(context).storageDialogContent),
-          actions: [
-            FlatButton(
-                onPressed: () => {Navigator.of(context).pop()},
-                child: Text(S.of(context).storageDialogNo)),
-            FlatButton(
-                onPressed: () async {
-                  bool isOpened = await openAppSettings();
-                  if (isOpened) {
-                    Navigator.of(context).pop();
-                  }
-                },
-                child: Text(S.of(context).storageDialogNo))
-          ],
-        ),
-      );
-    }
-
-    return await Permission.storage.status;
-  }
-}
-
-class _VideoAttach extends StatelessWidget {
-  _VideoAttach(this._videoToPlay);
-
-  final String _videoToPlay;
-
-  @override
-  Widget build(BuildContext context) => Container(
-        color: Colors.black,
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            Expanded(
-              flex: 8,
-              child: VideoView(videoToPlay: _videoToPlay),
-            ),
-            Expanded(
-              flex: 1,
-              child: ChangeNotifierProvider.value(
-                value: Provider.of<ChatModel>(context),
-                builder: (context, child) {
-                  return Consumer<ChatModel>(
-                    builder: (context, value, child) {
-                      if (value.sendingProgress == 0) {
-                        return Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          mainAxisSize: MainAxisSize.max,
-                          children: [
-                            Expanded(
-                              child: FlatButton(
-                                minWidth: double.infinity,
-                                color: Colors.black,
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                child: Text(S.of(context).storageDialogNo),
-                                textColor: Colors.blueAccent,
-                              ),
-                            ),
-                            Expanded(
-                              child: FlatButton(
-                                  minWidth: double.infinity,
-                                  color: Colors.black,
-                                  onPressed: () async {
-                                    Provider.of<ChatModel>(context,
-                                            listen: false)
-                                        .sendMessage(File(_videoToPlay),
-                                            ChatMessageType.Video.index);
-                                  },
-                                  child: Text(S.of(context).storageDialogSend),
-                                  textColor: Colors.blue),
-                            )
-                          ],
-                        );
-                      } else if (value.sendingProgress == 1) {
-                        Navigator.pop(context);
-                        return Container();
-                      } else {
-                        return LinearProgressIndicator(
-                          value: value.sendingProgress,
-                        );
-                      }
-                    },
-                  );
-                },
-              ),
-            )
-          ],
-        ),
-      );
 }

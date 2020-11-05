@@ -1,11 +1,9 @@
 import 'package:flutter_chat/chat_list/models/auth_model.dart';
 import 'package:flutter_chat/repository/user_repository.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 
 class MockUserRepo extends Mock implements UserRepository {}
-class MockFlutterToast extends Mock implements Fluttertoast {}
 
 void main() {
   MockUserRepo mockRepo;
@@ -63,7 +61,7 @@ void main() {
       expect(model.result, AuthResult.failed);
     });
 
-    test('WHEN google throws error THEN state is failed', () async {
+    test('WHEN google signIn throws error THEN state is failed', () async {
       // given
       when(mockRepo.signInWithGoogle()).thenThrow("error");
       final model = AuthModel(mockRepo);

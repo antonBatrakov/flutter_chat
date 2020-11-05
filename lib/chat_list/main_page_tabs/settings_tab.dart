@@ -3,12 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter_chat/api/info_api.dart';
 import 'package:flutter_chat/api/model/post.dart';
+import 'package:flutter_chat/chat_list/main_page_tabs/settings_key_value.dart';
 import 'package:flutter_chat/chat_list/models/auth_model.dart';
 import 'package:flutter_chat/chat_list/models/lang_model.dart';
 import 'package:flutter_chat/chat_list/models/settings_model.dart';
 import 'package:flutter_chat/generated/l10n.dart';
 import 'package:flutter_chat/models/multiple_select.dart';
 import 'package:flutter_chat/repository/user_repository.dart';
+import 'package:flutter_chat/resources/assets.dart';
 import 'package:flutter_chat/routes.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:package_info/package_info.dart';
@@ -214,7 +216,9 @@ class _SettingsTabState extends State<SettingsTab> {
                 : user.email,
           ),
           leading: CircleAvatar(
-            backgroundImage: NetworkImage(user.photoURL ?? ""),
+            backgroundImage: user.photoURL != null
+                ? NetworkImage(user.photoURL)
+                : AssetImage(AuthImg.googleSignInLogo),
             backgroundColor: Colors.grey,
           ),
         ),
@@ -266,39 +270,44 @@ class _SettingsTabState extends State<SettingsTab> {
           LanguageSettingsModel settingsModel) =>
       AlertDialog(
         title: Text(S.of(context).settingsScreenChangeLangTitle),
-        content: ListView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: items.length,
-          itemBuilder: (context, index) => Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              ListTile(
-                contentPadding: EdgeInsets.zero,
-                onTap: () {
-                  Fluttertoast.showToast(
-                    msg: S.of(context).debugInDevelopment,
-                    backgroundColor: Colors.grey,
-                  );
-                  settingsModel.updateValue(items[index]);
-                  Navigator.pop(context);
-                },
-                selected: items[index].isSelected,
-                leading: Radio(
-                  visualDensity: VisualDensity(
-                    horizontal: VisualDensity.minimumDensity,
-                    vertical: VisualDensity.minimumDensity,
+        content: Container(
+          width: 400,
+          child: ListView.builder(
+            key: ValueKey(SettingsKeys.langList),
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: items.length,
+            itemBuilder: (context, index) => Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                ListTile(
+                  key: Key(items[index].value.langName),
+                  contentPadding: EdgeInsets.zero,
+                  onTap: () {
+                    Fluttertoast.showToast(
+                      msg: S.of(context).debugInDevelopment,
+                      backgroundColor: Colors.grey,
+                    );
+                    settingsModel.updateValue(items[index]);
+                    Navigator.pop(context);
+                  },
+                  selected: items[index].isSelected,
+                  leading: Radio(
+                    visualDensity: VisualDensity(
+                      horizontal: VisualDensity.minimumDensity,
+                      vertical: VisualDensity.minimumDensity,
+                    ),
+                    value: items[index].isSelected,
+                    groupValue: true,
+                    onChanged: (_) {},
                   ),
-                  value: items[index].isSelected,
-                  groupValue: true,
-                  onChanged: (_) {},
+                  title: Text(items[index].value.langName),
                 ),
-                title: Text(items[index].value.langName),
-              ),
-              Divider(
-                height: 1,
-              ),
-            ],
+                Divider(
+                  height: 1,
+                ),
+              ],
+            ),
           ),
         ),
       );
@@ -325,6 +334,7 @@ class _SettingsTabState extends State<SettingsTab> {
       builder: (context, snapshot) => Column(
         children: <Widget>[
           ListTile(
+            key: ValueKey(SettingsKeys.langTile),
             onTap: () => showDialog(
               context: context,
               child: _createLangSelectDialog(
@@ -333,7 +343,9 @@ class _SettingsTabState extends State<SettingsTab> {
             title: Text(S.of(context).settingsScreenChangeLangTitle),
             trailing: Text(snapshot.data is MultipleSelectValue
                 ? snapshot.data.value.langName
-                : ""),
+                : "",
+              key: Key(SettingsKeys.langTileTrailing),
+            ),
           ),
           Divider(
             height: 1,
