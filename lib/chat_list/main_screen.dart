@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_chat/chat_list/main_page_tabs/chat_tab.dart';
 import 'package:flutter_chat/chat_list/main_page_tabs/groups_tab.dart';
 import 'package:flutter_chat/chat_list/main_page_tabs/settings_tab.dart';
+import 'package:flutter_chat/chat_list/main_screen_keys.dart';
 import 'package:flutter_chat/chat_list/models/groups_list_model.dart';
 import 'package:flutter_chat/generated/l10n.dart';
 import 'package:provider/provider.dart';
@@ -33,7 +34,6 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
-          // todo fetch
           create: (ctx) => GroupListSource(),
         )
       ],
@@ -47,19 +47,23 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
             ),
             title: Text(S.of(context).chatScreenTitle),
             bottom: TabBar(
+              key: ValueKey(MainScreenKeys.mainTabBar),
               controller: _tabController,
               tabs: <Widget>[
                 Tab(
                   icon: Icon(Icons.chat),
-                  text: S.of(context).chatScreenChats,
+                  child: Text(S.of(context).chatScreenChats),
                 ),
                 Tab(
                   icon: Icon(Icons.group),
-                  text: S.of(context).chatScreenGroups,
+                  child: Text(S.of(context).chatScreenGroups),
                 ),
                 Tab(
                   icon: Icon(Icons.settings),
-                  text: S.of(context).chatScreenSettings,
+                  child: Text(
+                    S.of(context).chatScreenSettings,
+                    key: Key(MainScreenKeys.settingsTab),
+                  ),
                 )
               ],
             ),
@@ -111,8 +115,6 @@ _showCloseDialog(BuildContext context) {
 class Kek extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      
-    );
+    return Container();
   }
 }

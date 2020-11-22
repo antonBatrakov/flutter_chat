@@ -12,7 +12,7 @@ class AuthModel extends ChangeNotifier {
     _updateStatus(AuthResult.inProgress);
 
     _updateStatus(
-        _userRepository.isSignedIn() ? AuthResult.signedId : AuthResult.none);
+        _userRepository.isSignedIn() ? AuthResult.signedIn : AuthResult.none);
   }
 
   AuthResult _result;
@@ -31,10 +31,6 @@ class AuthModel extends ChangeNotifier {
         _updateStatus(AuthResult.failed);
       });
     } catch (exception) {
-      Fluttertoast.showToast(
-        msg: exception.toString(),
-        backgroundColor: Colors.grey,
-      );
       log(exception);
       _updateStatus(AuthResult.failed);
     }
@@ -69,4 +65,4 @@ class AuthModel extends ChangeNotifier {
   }
 }
 
-enum AuthResult { signedId, signedOut, failed, inProgress, none }
+enum AuthResult { signedIn, signedOut, failed, inProgress, none }
