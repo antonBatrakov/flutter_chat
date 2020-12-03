@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:chopper/chopper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
@@ -68,7 +70,7 @@ class _SettingsTabState extends State<SettingsTab> {
     } else if (settingsModel is BoolSettingsModel) {
       return _boolSettings(settingsModel);
     } else if (settingsModel is UserSettingsModel) {
-      return _userSettings(settingsModel);
+      return UserSettingsTile(settingsModel);
     } else if (settingsModel is LogOutSettingsModel) {
       return _logOutSettings(context, settingsModel);
     } else if (settingsModel is InfoSettingsModel) {
@@ -83,9 +85,14 @@ class _SettingsTabState extends State<SettingsTab> {
     final userRepository = Provider.of<UserRepository>(context, listen: false);
     showDialog(
         context: context,
-        builder: (_) => AlertDialog(
-              title: Text(S.of(context).logoutDialogTitle),
-              content: Text(S.of(context).logoutDialogDetails),
+        builder: (_) =>
+            AlertDialog(
+              title: Text(S
+                  .of(context)
+                  .logoutDialogTitle),
+              content: Text(S
+                  .of(context)
+                  .logoutDialogDetails),
               actions: <Widget>[
                 ChangeNotifierProvider(
                   create: (_) => AuthModel(userRepository),
@@ -106,7 +113,9 @@ class _SettingsTabState extends State<SettingsTab> {
                               });
                               Fluttertoast.showToast(
                                   backgroundColor: Colors.grey,
-                                  msg: S.of(context).logoutDialogFailed,
+                                  msg: S
+                                      .of(context)
+                                      .logoutDialogFailed,
                                   toastLength: Toast.LENGTH_SHORT);
                               break;
                             default:
@@ -116,9 +125,11 @@ class _SettingsTabState extends State<SettingsTab> {
                               value.signOut();
                             },
                             child: Text(
-                              S.of(context).logoutDialogYes,
+                              S
+                                  .of(context)
+                                  .logoutDialogYes,
                               style:
-                                  TextStyle(color: Colors.blue, fontSize: 14),
+                              TextStyle(color: Colors.blue, fontSize: 14),
                             ),
                           );
                         },
@@ -126,7 +137,9 @@ class _SettingsTabState extends State<SettingsTab> {
                       FlatButton(
                         onPressed: () => Navigator.of(context).pop(),
                         child: Text(
-                          S.of(context).logoutDialogNo,
+                          S
+                              .of(context)
+                              .logoutDialogNo,
                           style: TextStyle(color: Colors.blue, fontSize: 14),
                         ),
                       ),
@@ -140,18 +153,24 @@ class _SettingsTabState extends State<SettingsTab> {
   _showInfoDialog(BuildContext context) {
     showDialog(
         context: context,
-        builder: (context) => FutureBuilder<Response<PostModel>>(
+        builder: (context) =>
+            FutureBuilder<Response<PostModel>>(
               future: Provider.of<InfoService>(context).getInfo(7),
-              builder: (context, snapshot) => AlertDialog(
-                title: Text(S.of(context).infoDialogTitle),
-                content: _infoDialogContent(snapshot),
-                actions: [
-                  FlatButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    child: Text(S.of(context).infoDialogClose),
-                  )
-                ],
-              ),
+              builder: (context, snapshot) =>
+                  AlertDialog(
+                    title: Text(S
+                        .of(context)
+                        .infoDialogTitle),
+                    content: _infoDialogContent(snapshot),
+                    actions: [
+                      FlatButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        child: Text(S
+                            .of(context)
+                            .infoDialogClose),
+                      )
+                    ],
+                  ),
             ));
   }
 
@@ -186,12 +205,14 @@ class _SettingsTabState extends State<SettingsTab> {
     }
   }
 
-  Widget _logOutSettings(
-          BuildContext context, LogOutSettingsModel settingsModel) =>
+  Widget _logOutSettings(BuildContext context,
+      LogOutSettingsModel settingsModel) =>
       Column(
         children: <Widget>[
           ListTile(
-            title: Text(S.of(context).settingsScreenLogout),
+            title: Text(S
+                .of(context)
+                .settingsScreenLogout),
             onTap: () => _showLogoutDialog(context),
           ),
           Divider(
@@ -200,54 +221,30 @@ class _SettingsTabState extends State<SettingsTab> {
         ],
       );
 
-  Widget _userSettings(UserSettingsModel settingsModel) {
-    final user = Provider.of<UserRepository>(context, listen: false).getUser();
-    return Column(
-      children: <Widget>[
-        ListTile(
-          onTap: () => Fluttertoast.showToast(
-            msg: S.of(context).debugInDevelopment,
-            backgroundColor: Colors.grey,
-          ),
-          contentPadding: EdgeInsets.all(10),
-          title: Text(
-            (user.displayName != null && user.displayName.isNotEmpty)
-                ? user.displayName
-                : user.email,
-          ),
-          leading: CircleAvatar(
-            backgroundImage: user.photoURL != null
-                ? NetworkImage(user.photoURL)
-                : AssetImage(AuthImg.googleSignInLogo),
-            backgroundColor: Colors.grey,
-          ),
-        ),
-        Divider(
-          height: 1,
-        ),
-      ],
-    );
-  }
-
-  Widget _boolSettings(BoolSettingsModel settingsModel) => Column(
+  Widget _boolSettings(BoolSettingsModel settingsModel) =>
+      Column(
         children: <Widget>[
           StreamBuilder(
             stream: settingsModel.value,
-            builder: (context, snapshot) => ListTile(
-              onTap: () {
-                Fluttertoast.showToast(
-                  msg: S.of(context).debugInDevelopment,
-                  backgroundColor: Colors.grey,
-                );
-                settingsModel.updateValue(
-                    snapshot.data is bool ? !snapshot.data : false);
-              },
-              title: Text(settingsModel.settingName),
-              trailing: Switch(
-                value: snapshot.data is bool ? snapshot.data : false,
-                onChanged: (newValue) => settingsModel.updateValue(newValue),
-              ),
-            ),
+            builder: (context, snapshot) =>
+                ListTile(
+                  onTap: () {
+                    Fluttertoast.showToast(
+                      msg: S
+                          .of(context)
+                          .debugInDevelopment,
+                      backgroundColor: Colors.grey,
+                    );
+                    settingsModel.updateValue(
+                        snapshot.data is bool ? !snapshot.data : false);
+                  },
+                  title: Text(settingsModel.settingName),
+                  trailing: Switch(
+                    value: snapshot.data is bool ? snapshot.data : false,
+                    onChanged: (newValue) =>
+                        settingsModel.updateValue(newValue),
+                  ),
+                ),
           ),
           Divider(
             height: 1,
@@ -255,7 +252,8 @@ class _SettingsTabState extends State<SettingsTab> {
         ],
       );
 
-  Widget _simpleSettings(SimpleSettingsModel settingsModel) => Column(
+  Widget _simpleSettings(SimpleSettingsModel settingsModel) =>
+      Column(
         children: <Widget>[
           ListTile(
             title: Text(settingsModel.settingName),
@@ -267,9 +265,11 @@ class _SettingsTabState extends State<SettingsTab> {
       );
 
   Widget _createLangSelectDialog(List<MultipleSelectValue<LocaleModel>> items,
-          LanguageSettingsModel settingsModel) =>
+      LanguageSettingsModel settingsModel) =>
       AlertDialog(
-        title: Text(S.of(context).settingsScreenChangeLangTitle),
+        title: Text(S
+            .of(context)
+            .settingsScreenChangeLangTitle),
         content: Container(
           width: 400,
           child: ListView.builder(
@@ -277,45 +277,51 @@ class _SettingsTabState extends State<SettingsTab> {
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             itemCount: items.length,
-            itemBuilder: (context, index) => Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                ListTile(
-                  key: Key(items[index].value.langName),
-                  contentPadding: EdgeInsets.zero,
-                  onTap: () {
-                    Fluttertoast.showToast(
-                      msg: S.of(context).debugInDevelopment,
-                      backgroundColor: Colors.grey,
-                    );
-                    settingsModel.updateValue(items[index]);
-                    Navigator.pop(context);
-                  },
-                  selected: items[index].isSelected,
-                  leading: Radio(
-                    visualDensity: VisualDensity(
-                      horizontal: VisualDensity.minimumDensity,
-                      vertical: VisualDensity.minimumDensity,
+            itemBuilder: (context, index) =>
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    ListTile(
+                      key: Key(items[index].value.langName),
+                      contentPadding: EdgeInsets.zero,
+                      onTap: () {
+                        Fluttertoast.showToast(
+                          msg: S
+                              .of(context)
+                              .debugInDevelopment,
+                          backgroundColor: Colors.grey,
+                        );
+                        settingsModel.updateValue(items[index]);
+                        Navigator.pop(context);
+                      },
+                      selected: items[index].isSelected,
+                      leading: Radio(
+                        visualDensity: VisualDensity(
+                          horizontal: VisualDensity.minimumDensity,
+                          vertical: VisualDensity.minimumDensity,
+                        ),
+                        value: items[index].isSelected,
+                        groupValue: true,
+                        onChanged: (_) {},
+                      ),
+                      title: Text(items[index].value.langName),
                     ),
-                    value: items[index].isSelected,
-                    groupValue: true,
-                    onChanged: (_) {},
-                  ),
-                  title: Text(items[index].value.langName),
+                    Divider(
+                      height: 1,
+                    ),
+                  ],
                 ),
-                Divider(
-                  height: 1,
-                ),
-              ],
-            ),
           ),
         ),
       );
 
-  Widget _infoSettings(BuildContext context) => Column(
+  Widget _infoSettings(BuildContext context) =>
+      Column(
         children: <Widget>[
           ListTile(
-            title: Text(S.of(context).infoDialogTitle),
+            title: Text(S
+                .of(context)
+                .infoDialogTitle),
             onTap: () => _showInfoDialog(context),
           ),
           Divider(
@@ -324,33 +330,122 @@ class _SettingsTabState extends State<SettingsTab> {
         ],
       );
 
-  Widget _languageSetting(
-      BuildContext context, LanguageSettingsModel settingsModel) {
+  Widget _languageSetting(BuildContext context,
+      LanguageSettingsModel settingsModel) {
     settingsModel.langChangeNotifier =
         Provider.of<LangChangeNotifier>(context, listen: false);
 
     return StreamBuilder<MultipleSelectValue<LocaleModel>>(
       stream: settingsModel.chosenValue,
-      builder: (context, snapshot) => Column(
-        children: <Widget>[
-          ListTile(
-            key: ValueKey(SettingsKeys.langTile),
-            onTap: () => showDialog(
-              context: context,
-              child: _createLangSelectDialog(
-                  settingsModel.valueOptions, settingsModel),
-            ),
-            title: Text(S.of(context).settingsScreenChangeLangTitle),
-            trailing: Text(snapshot.data is MultipleSelectValue
-                ? snapshot.data.value.langName
-                : "",
-              key: Key(SettingsKeys.langTileTrailing),
-            ),
+      builder: (context, snapshot) =>
+          Column(
+            children: <Widget>[
+              ListTile(
+                key: ValueKey(SettingsKeys.langTile),
+                onTap: () =>
+                    showDialog(
+                      context: context,
+                      child: _createLangSelectDialog(
+                          settingsModel.valueOptions, settingsModel),
+                    ),
+                title: Text(S
+                    .of(context)
+                    .settingsScreenChangeLangTitle),
+                trailing: Text(snapshot.data is MultipleSelectValue
+                    ? snapshot.data.value.langName
+                    : "",
+                  key: Key(SettingsKeys.langTileTrailing),
+                ),
+              ),
+              Divider(
+                height: 1,
+              ),
+            ],
           ),
-          Divider(
-            height: 1,
+    );
+  }
+}
+
+class UserSettingsTile extends StatefulWidget {
+  UserSettingsTile(this._settingsModel);
+
+  final UserSettingsModel _settingsModel;
+
+  @override
+  _UserSettingsTileState createState() => _UserSettingsTileState();
+}
+
+class _UserSettingsTileState extends State<UserSettingsTile>
+    with SingleTickerProviderStateMixin {
+
+  Animation<double> _animation;
+  AnimationController _animationController;
+  AnimationStatus _animationStatus = AnimationStatus.dismissed;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: Duration(seconds: 1)
+    );
+    _animation = Tween<double>(end: 2, begin: 1).animate(_animationController)
+    ..addListener(() {
+      setState(() {
+      });
+    })
+    ..addStatusListener((status) {
+      _animationStatus = status;
+    });
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final user = Provider.of<UserRepository>(context, listen: false).getUser();
+    return ScaleTransition(
+      alignment: Alignment.centerLeft,
+      scale: _animation,
+      child: Transform(
+        alignment: FractionalOffset.center,
+        transform: Matrix4.identity()
+          ..setEntry(3, 2, 0.002)
+          ..setRotationX(pi * 2 * _animation.value),
+        child: GestureDetector(
+          onTap: () {
+            if (_animationStatus == AnimationStatus.dismissed) {
+              _animationController.forward();
+            } else {
+              _animationController.reverse();
+            }
+          },
+          child: Column(
+            children: <Widget>[
+              ListTile(
+                contentPadding: EdgeInsets.all(10),
+                title: Text(
+                  (user.displayName != null && user.displayName.isNotEmpty)
+                      ? user.displayName
+                      : user.email,
+                ),
+                leading: CircleAvatar(
+                  backgroundImage: user.photoURL != null
+                      ? NetworkImage(user.photoURL)
+                      : AssetImage(AuthImg.googleSignInLogo),
+                  backgroundColor: Colors.grey,
+                ),
+              ),
+              Divider(
+                height: 1,
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

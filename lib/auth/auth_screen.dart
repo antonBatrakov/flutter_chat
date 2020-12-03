@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_chat/auth/auth_widget_keys.dart';
 import 'package:flutter_chat/auth/password_field.dart';
+import 'package:flutter_chat/auth/sign_in_button.dart';
 import 'package:flutter_chat/chat_list/models/auth_model.dart';
 import 'package:flutter_chat/generated/l10n.dart';
 import 'package:flutter_chat/repository/user_repository.dart';
@@ -90,8 +91,7 @@ class AuthFields extends StatelessWidget {
                     _passwordTextField(_passwordTextFieldController),
                     Padding(
                       padding: const EdgeInsets.fromLTRB(0, 32, 0, 16),
-                      child: _signInButton(
-                        context,
+                      child: SignInButton(
                         _emailTextFieldController,
                         _passwordTextFieldController,
                       ),
@@ -133,35 +133,33 @@ Widget _authScreenHeader(BuildContext context) => Row(
       ],
     );
 
-Widget _passwordTextField(TextEditingController controller) =>
-    Padding(
+Widget _passwordTextField(TextEditingController controller) => Padding(
       padding: const EdgeInsets.symmetric(
         vertical: 6,
       ),
       child: Consumer<PasswordModel>(
-        builder: (ctx, value, child) =>
-            TextField(
-              autofocus: true,
-              key: Key(AuthKeys.passwordTextFieldKey),
-              controller: controller,
-              textInputAction: TextInputAction.done,
-              obscureText: value.isObscure,
-              decoration: InputDecoration(
-                suffixIcon: IconButton(
-                  icon: Icon(
-                      value.isObscure ? Icons.lock_outline : Icons.lock_open),
-                  onPressed:() => value.toggleObscure(),
-                ),
-                alignLabelWithHint: true,
-                labelText: S.of(ctx).authScreenPassword,
-                border: UnderlineInputBorder(),
-              ),
+        builder: (ctx, value, child) => TextField(
+          autofocus: true,
+          key: Key(AuthKeys.passwordTextFieldKey),
+          controller: controller,
+          textInputAction: TextInputAction.done,
+          obscureText: value.isObscure,
+          decoration: InputDecoration(
+            suffixIcon: IconButton(
+              icon:
+                  Icon(value.isObscure ? Icons.lock_outline : Icons.lock_open),
+              onPressed: () => value.toggleObscure(),
             ),
+            alignLabelWithHint: true,
+            labelText: S.of(ctx).authScreenPassword,
+            border: UnderlineInputBorder(),
+          ),
+        ),
       ),
     );
 
-Widget _emailTextField(BuildContext context,
-    TextEditingController controller) =>
+Widget _emailTextField(
+        BuildContext context, TextEditingController controller) =>
     Padding(
       padding: const EdgeInsets.symmetric(
         vertical: 6,
@@ -179,30 +177,6 @@ Widget _emailTextField(BuildContext context,
           border: UnderlineInputBorder(),
         ),
       ),
-    );
-
-Widget _signInButton(BuildContext context,
-    TextEditingController emailTextFieldController,
-    TextEditingController passwordTextFieldController) =>
-    MaterialButton(
-      key: Key(AuthKeys.loginButtonKey),
-      padding: EdgeInsets.all(15),
-      color: Colors.blue,
-      minWidth: double.infinity,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(Radius.circular(30)),
-      ),
-      child: Text(
-        S.of(context).authScreenSignIn,
-        style: TextStyle(color: Colors.white),
-      ),
-      onPressed: () {
-        Provider.of<AuthModel>(
-          context,
-          listen: false,
-        ).signInWithCredentials(
-            emailTextFieldController.text, passwordTextFieldController.text);
-      }
     );
 
 Widget _googleSignInButton(BuildContext context) => OutlineButton(
